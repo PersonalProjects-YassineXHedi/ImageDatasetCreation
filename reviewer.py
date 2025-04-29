@@ -8,7 +8,7 @@ HEADERS = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36"
     }
 
-def review_images(image_urls, save_folder):
+def review_images(image_urls, save_folder_path, subfolder_name):
     index = 0
     img_tk = None
 
@@ -35,7 +35,7 @@ def review_images(image_urls, save_folder):
         try:
             response = requests.get(image_urls[index], headers=HEADERS)
             image = Image.open(io.BytesIO(response.content)).convert("RGB")
-            filename = os.path.join(save_folder, f"{index}.jpg")
+            filename = os.path.join(save_folder_path,subfolder_name, f"{index}.jpg")
             image.save(filename, "JPEG")
             print(f"Saved: {filename}")
         except Exception as e:
@@ -63,7 +63,8 @@ def review_images(image_urls, save_folder):
     tk.Button(btn_frame, text="Save", command=save_image).pack(side="left", padx=10)
     tk.Button(btn_frame, text="Skip", command=skip_image).pack(side="right", padx=10)
 
-    os.makedirs(save_folder, exist_ok=True)
+    os.makedirs(save_folder_path, exist_ok=True)
+    os.makedirs(save_folder_path +subfolder_name +'/' , exist_ok=True)
 
     show_image()
     root.mainloop()
