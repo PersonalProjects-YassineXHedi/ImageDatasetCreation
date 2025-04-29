@@ -10,7 +10,8 @@ if __name__ == "__main__":
     wd = webdriver.Chrome(service=service)
 
     # Scrape images
-    urls = get_images_from_google(wd, delay=1, max_images=5)
+    search_query = "cucumber on table"
+    urls = get_images_from_google(search_query, wd, delay=1, max_images=5)
     wd.quit()
 
     # Review and selectively download

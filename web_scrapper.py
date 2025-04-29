@@ -7,12 +7,13 @@ from selenium.webdriver.common.by import By
 import time
 
 
-def get_images_from_google(wd, delay, max_images):
+def get_images_from_google(query, wd, delay, max_images):
     def scroll_down(wd):
         wd.execute_script("window.scrollBy(0, document.body.scrollHeight);")
         time.sleep(delay)
 
-    url = "https://www.google.com/search?sca_esv=cdf2793c44a7e080&rlz=1C1PNJJ_frTN1069TN1069&q=meyer+lemons+lemon+on+table&uds=ABqPDvztZD_Nu18FR6tNPw2cK_RRgTc7n8IPBVhFYlxFFMaqzjOkqu3fJnBTz0dFfqrjcYug16cnJOHyOLb8lIrWepC7DE37G0yK6_Pk7oJlzTFFNfkCBdqi1I_XAdjjFF-GQGne3GoIo5XADUi7uQC2opwWo3xxxw&udm=2&sa=X&ved=2ahUKEwj2wYbB1_uMAxUiF2IAHSMIMWkQxKsJegQIDhAB&ictx=0&biw=1036&bih=651&dpr=1.25"
+    # url = "https://www.google.com/search?sca_esv=cdf2793c44a7e080&rlz=1C1PNJJ_frTN1069TN1069&q=meyer+lemons+lemon+on+table&uds=ABqPDvztZD_Nu18FR6tNPw2cK_RRgTc7n8IPBVhFYlxFFMaqzjOkqu3fJnBTz0dFfqrjcYug16cnJOHyOLb8lIrWepC7DE37G0yK6_Pk7oJlzTFFNfkCBdqi1I_XAdjjFF-GQGne3GoIo5XADUi7uQC2opwWo3xxxw&udm=2&sa=X&ved=2ahUKEwj2wYbB1_uMAxUiF2IAHSMIMWkQxKsJegQIDhAB&ictx=0&biw=1036&bih=651&dpr=1.25"
+    url = f"https://www.google.com/search?q={query}&tbm=isch"
     wd.get(url)
 
     image_urls = set()
