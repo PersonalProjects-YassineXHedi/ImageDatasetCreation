@@ -16,4 +16,4 @@ if __name__ == "__main__":
     wd.quit()
 
     # Review and selectively download
-    review_images(urls, save_folder_path="OutputData/",subfolder_name='lemon')
+    review_images(urls, save_folder_path="OutputData/",subfolder_name='test')
