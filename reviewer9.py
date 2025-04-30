@@ -92,6 +92,7 @@ def review_images(image_urls, save_folder_path, subfolder_name):
 
 
     Button(root, text="Next", command=next_batch).pack(pady=10)
+    root.bind("<space>", lambda event: next_batch())
 
     show_batch()
     root.mainloop()
