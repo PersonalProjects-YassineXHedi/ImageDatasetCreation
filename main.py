@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from web_scrapper import get_images_from_google
-from reviewer import review_images
+from reviewer9 import review_images
 
 if __name__ == "__main__":
     # Setup ChromeDriver
@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     # Scrape images
     search_query = "lemon on table"
-    urls = get_images_from_google(search_query, wd, delay=1, max_images=3)
+    urls = get_images_from_google(search_query, wd, delay=1, max_images=12)
     print(urls)
     wd.quit()
 
