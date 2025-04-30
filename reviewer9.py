@@ -78,7 +78,7 @@ def review_images(image_urls, save_folder_path, subfolder_name):
 
     screen_width = root.winfo_screenwidth() - 25
     screen_height = root.winfo_screenheight() - 50
-    cell_width = (screen_width // 3)
+    cell_width = (screen_width // 3) - 25
     cell_height = (screen_height // 3) - 50
 
     root.maxsize(screen_width, screen_height)
@@ -86,6 +86,9 @@ def review_images(image_urls, save_folder_path, subfolder_name):
     grid_frame = Frame(root)
     grid_frame.pack()
 
+
+    os.makedirs(save_folder_path, exist_ok=True)
+    os.makedirs(save_folder_path +subfolder_name +'/' , exist_ok=True)
 
 
     Button(root, text="Next", command=next_batch).pack(pady=10)
