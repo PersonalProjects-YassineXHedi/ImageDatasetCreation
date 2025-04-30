@@ -64,7 +64,7 @@ def review_images(image_urls, save_folder_path, subfolder_name):
             if selected and img_index < len(images):
                 try:
                     image = images[img_index]
-                    filename = os.path.join(save_folder_path,subfolder_name, f"{img_index}.jpg")
+                    filename = os.path.join(folder_path, f"{img_index}.jpg")
                     image.save(filename, "JPEG")
                     print(f"Saved: {filename}")
                 except Exception as e:
@@ -88,7 +88,12 @@ def review_images(image_urls, save_folder_path, subfolder_name):
 
 
     os.makedirs(save_folder_path, exist_ok=True)
-    os.makedirs(save_folder_path +subfolder_name +'/' , exist_ok=True)
+    folder_path = os.path.join(save_folder_path,subfolder_name)
+    i = 1
+    while os.path.exists(folder_path):
+        folder_path = os.path.join(save_folder_path,f"{subfolder_name}{i}")
+        i += 1
+    os.makedirs(folder_path , exist_ok=True)
 
 
     Button(root, text="Next", command=next_batch).pack(pady=10)
