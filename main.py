@@ -10,8 +10,9 @@ if __name__ == "__main__":
     wd = webdriver.Chrome(service=service)
 
     # Scrape images
-    search_query = "lemon on table"
-    urls = get_images_from_google(search_query, wd, delay=1, max_images=300)
+    search_type = 'shoppings' #It can be either shoppings images
+    search_query = "vinegar"
+    urls = get_images_from_google(search_type, search_query, wd, delay=1, max_images=5)
     print(urls)
     wd.quit()
 
