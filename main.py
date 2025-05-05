@@ -11,12 +11,12 @@ if __name__ == "__main__":
     wd = webdriver.Chrome(service=service)
 
     # Scrape images
-    search_type = 'shoppings' #It can be either shoppings or images
-    search_query = "mustard"
+    search_type = 'images' #It can be either shoppings or images
+    search_query = "chicken breast raw"
     urls = get_images_from_google(search_type, search_query, wd, delay=1, max_images=300)
     print(urls)
     wd.quit()
 
     # Review and selectively download
-    review_images(urls, save_folder_path="OutputData/",subfolder_name='mustard')
+    review_images(urls, save_folder_path="OutputData/",subfolder_name='chicken')
  
