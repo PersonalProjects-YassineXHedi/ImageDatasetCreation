@@ -4,17 +4,19 @@ from web_scrapper import get_images_from_google
 from reviewer9 import review_images
 
 if __name__ == "__main__":
+    
     # Setup ChromeDriver
     PATH = "C:/Users/yassi/Desktop/Projet/CookBotProject/WebScrappingDownloads/chromedriver.exe" 
     service = Service(executable_path=PATH)
     wd = webdriver.Chrome(service=service)
 
     # Scrape images
-    search_type = 'shoppings' #It can be either shoppings images
-    search_query = "vinegar"
-    urls = get_images_from_google(search_type, search_query, wd, delay=1, max_images=5)
+    search_type = 'shoppings' #It can be either shoppings or images
+    search_query = "mustard"
+    urls = get_images_from_google(search_type, search_query, wd, delay=1, max_images=300)
     print(urls)
     wd.quit()
 
     # Review and selectively download
-    review_images(urls, save_folder_path="OutputData/",subfolder_name='test')
+    review_images(urls, save_folder_path="OutputData/",subfolder_name='mustard')
+ 
