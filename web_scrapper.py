@@ -8,17 +8,25 @@ import time
 def get_images_from_google(search_type, query, wd, delay, max_images):
     match search_type:
         case 'images':
-            get_images_from_google_images(query, wd, delay, max_images)
+            return get_images_from_google_images(query, wd, delay, max_images)
         case 'shoppings':
-            get_images_from_google_shop(query, wd, delay, max_images)
+            return get_images_from_google_shop(query, wd, delay, max_images)
 
-
-
-def get_images_from_google_images(query, wd, delay, max_images):
-    def scroll_down(wd):
+def scroll_down(wd, delay):
+    try:
+        last_height = wd.execute_script("return document.body.scrollHeight")
         wd.execute_script("window.scrollBy(0, document.body.scrollHeight);")
         time.sleep(delay)
+        new_height = wd.execute_script("return document.body.scrollHeight")
+        if new_height == last_height:
+            print("Reached the end of the page.")
+            return False
+        return True
+    except Exception as e:
+        print(e)
+        return False
 
+def get_images_from_google_images(query, wd, delay, max_images):
     url = f"https://www.google.com/search?q={query}&tbm=isch"
     wd.get(url)
 
@@ -85,16 +93,13 @@ def get_images_from_google_images(query, wd, delay, max_images):
                 skips += 1
                 max_images += 1
                 continue
-        scroll_down(wd)
+        if(not scroll_down(wd, delay)):
+            break
 
         
     return list(image_urls)
 
 def get_images_from_google_shop(query, wd, delay, max_images):
-    def scroll_down(wd):
-        wd.execute_script("window.scrollBy(0, document.body.scrollHeight);")
-        time.sleep(delay)
-
     url = f"https://www.google.com/search?q={query}&tbm=shop"
     wd.get(url)
 
@@ -161,7 +166,8 @@ def get_images_from_google_shop(query, wd, delay, max_images):
                 skips += 1
                 max_images += 1
                 continue
-        scroll_down(wd)
+        if(not scroll_down(wd, delay)):
+            break
 
         
     return list(image_urls)
