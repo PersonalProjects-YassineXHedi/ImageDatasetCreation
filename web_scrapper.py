@@ -1,16 +1,41 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+import concurrent.futures
 import time
 
+def get_urls_from_query(executable_path, search_type, search_query, delay, max_images):
+    futures = []
+    urls =[]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        if(search_type == 0):
+            futures.append(executor.submit(get_images_from_google, executable_path, 'images', search_query, delay, max_images))
+        elif(search_type == 1):
+            futures.append(executor.submit(get_images_from_google, executable_path, 'shoppings', search_query, delay, max_images))
+        elif (search_type == 2):
+            futures.append(executor.submit(get_images_from_google, executable_path, 'images', search_query, delay, max_images//2))
+            futures.append(executor.submit(get_images_from_google, executable_path, 'shoppings', search_query, delay, max_images//2))
+        else:
+            print('This is a wrong search type.')
+        for future in concurrent.futures.as_completed(futures):
+            result = future.result()
+            if result is not None:
+                urls.extend(result)
+    print(urls)
+    return urls
 
-def get_images_from_google(search_type, query, wd, delay, max_images):
+
+
+def get_images_from_google(executable_path, search_type, query, delay, max_images):
     match search_type:
         case 'images':
-            return get_images_from_google_images(query, wd, delay, max_images)
+            return get_images_from_google_images(executable_path, query, delay, max_images)
         case 'shoppings':
-            return get_images_from_google_shop(query, wd, delay, max_images)
+            return get_images_from_google_shop(executable_path, query, delay, max_images)
 
 def scroll_down(wd, delay):
     try:
@@ -26,7 +51,16 @@ def scroll_down(wd, delay):
         print(e)
         return False
 
-def get_images_from_google_images(query, wd, delay, max_images):
+def get_images_from_google_images(executable_path, query, delay, max_images):
+    service = Service(executable_path=executable_path)
+
+    chrome_options = Options()
+    chrome_options.add_argument(
+        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36"
+    )
+
+    wd = webdriver.Chrome(service=service, options=chrome_options)
+
     url = f"https://www.google.com/search?q={query}&tbm=isch"
     wd.get(url)
 
@@ -95,11 +129,19 @@ def get_images_from_google_images(query, wd, delay, max_images):
                 continue
         if(not scroll_down(wd, delay)):
             break
-
-        
+    wd.quit()    
     return list(image_urls)
 
-def get_images_from_google_shop(query, wd, delay, max_images):
+def get_images_from_google_shop(executable_path, query, delay, max_images):
+    service = Service(executable_path=executable_path)
+
+    chrome_options = Options()
+    chrome_options.add_argument(
+        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36"
+    )
+
+    wd = webdriver.Chrome(service=service, options=chrome_options)
+
     url = f"https://www.google.com/search?q={query}&tbm=shop"
     wd.get(url)
 
@@ -168,6 +210,5 @@ def get_images_from_google_shop(query, wd, delay, max_images):
                 continue
         if(not scroll_down(wd, delay)):
             break
-
-        
+    wd.quit()    
     return list(image_urls)
