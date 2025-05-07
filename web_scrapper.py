@@ -5,8 +5,11 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+import undetected_chromedriver as uc
 import concurrent.futures
 import time
+
+CHROME_VERSION = 135
 
 def get_urls_from_query(executable_path, search_type, search_query, delay, max_images):
     futures = []
@@ -35,7 +38,7 @@ def get_images_from_google(executable_path, search_type, query, delay, max_image
         case 'images':
             return get_images_from_google_images(executable_path, query, delay, max_images)
         case 'shoppings':
-            return get_images_from_google_shop(executable_path, query, delay, max_images)
+            return get_images_from_google_shop(query, delay, max_images)
 
 def scroll_down(wd, delay):
     try:
@@ -132,15 +135,13 @@ def get_images_from_google_images(executable_path, query, delay, max_images):
     wd.quit()    
     return list(image_urls)
 
-def get_images_from_google_shop(executable_path, query, delay, max_images):
-    service = Service(executable_path=executable_path)
-
-    chrome_options = Options()
-    chrome_options.add_argument(
+def get_images_from_google_shop(query, delay, max_images):
+    options = uc.ChromeOptions()
+    options.add_argument(
         "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36"
     )
 
-    wd = webdriver.Chrome(service=service, options=chrome_options)
+    wd = uc.Chrome(options=options, version_main=CHROME_VERSION)
 
     url = f"https://www.google.com/search?q={query}&tbm=shop"
     wd.get(url)
