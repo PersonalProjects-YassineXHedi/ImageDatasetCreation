@@ -1,5 +1,3 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from web_scrapper import get_urls_from_query
 from reviewer9 import review_images
 
