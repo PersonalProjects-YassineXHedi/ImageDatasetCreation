@@ -11,17 +11,17 @@ import time
 
 CHROME_VERSION = 135
 
-def get_urls_from_query(executable_path, search_type, search_query, delay, max_images):
+def get_urls_from_query(executable_path, search_type, search_query, delay, max_images, start_from_bottom):
     futures = []
     urls =[]
     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
         if(search_type == 0):
-            futures.append(executor.submit(get_images_from_google, executable_path, 'images', search_query, delay, max_images))
+            futures.append(executor.submit(get_images_from_google, executable_path, 'images', search_query, delay, max_images, start_from_bottom))
         elif(search_type == 1):
-            futures.append(executor.submit(get_images_from_google, executable_path, 'shoppings', search_query, delay, max_images))
+            futures.append(executor.submit(get_images_from_google, executable_path, 'shoppings', search_query, delay, max_images, start_from_bottom))
         elif (search_type == 2):
-            futures.append(executor.submit(get_images_from_google, executable_path, 'images', search_query, delay, max_images//2))
-            futures.append(executor.submit(get_images_from_google, executable_path, 'shoppings', search_query, delay, max_images//2))
+            futures.append(executor.submit(get_images_from_google, executable_path, 'images', search_query, delay, max_images//2, start_from_bottom))
+            futures.append(executor.submit(get_images_from_google, executable_path, 'shoppings', search_query, delay, max_images//2, start_from_bottom))
         else:
             print('This is a wrong search type.')
         for future in concurrent.futures.as_completed(futures):
@@ -33,12 +33,12 @@ def get_urls_from_query(executable_path, search_type, search_query, delay, max_i
 
 
 
-def get_images_from_google(executable_path, search_type, query, delay, max_images):
+def get_images_from_google(executable_path, search_type, query, delay, max_images, start_from_bottom):
     match search_type:
         case 'images':
-            return get_images_from_google_images(executable_path, query, delay, max_images)
+            return get_images_from_google_images(executable_path, query, delay, max_images, start_from_bottom)
         case 'shoppings':
-            return get_images_from_google_shop(query, delay, max_images)
+            return get_images_from_google_shop(query, delay, max_images, start_from_bottom)
 
 def scroll_down(wd, delay):
     try:
@@ -53,8 +53,14 @@ def scroll_down(wd, delay):
     except Exception as e:
         print(e)
         return False
+    
+def scroll_to_bottom(wd, delay):
+    reach_bottom = False
+    while (not reach_bottom):
+        reach_bottom = not scroll_down(wd, delay)
+    
 
-def get_images_from_google_images(executable_path, query, delay, max_images):
+def get_images_from_google_images(executable_path, query, delay, max_images, start_from_bottom):
     service = Service(executable_path=executable_path)
 
     chrome_options = Options()
@@ -76,7 +82,13 @@ def get_images_from_google_images(executable_path, query, delay, max_images):
             WebDriverWait(wd, 10).until(
                 EC.presence_of_all_elements_located((By.CLASS_NAME, "F0uyec"))
             )
-            thumbnails = wd.find_elements(By.CLASS_NAME, "F0uyec")
+            if(start_from_bottom):
+                scroll_to_bottom(wd, delay)
+                thumbnails = wd.find_elements(By.CLASS_NAME, "F0uyec")
+                thumbnails = thumbnails[::-1]
+            else:
+                thumbnails = wd.find_elements(By.CLASS_NAME, "F0uyec")
+
         except Exception as e:
             print(e)
             skips += 1
@@ -135,7 +147,7 @@ def get_images_from_google_images(executable_path, query, delay, max_images):
     wd.quit()    
     return list(image_urls)
 
-def get_images_from_google_shop(query, delay, max_images):
+def get_images_from_google_shop(query, delay, max_images, start_from_bottom):
     options = uc.ChromeOptions()
     options.add_argument(
         "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36"
@@ -155,7 +167,12 @@ def get_images_from_google_shop(query, delay, max_images):
             WebDriverWait(wd, 10).until(
                 EC.presence_of_all_elements_located((By.CLASS_NAME, "njFjte"))
             )
-            thumbnails = wd.find_elements(By.CLASS_NAME, "njFjte")
+            if(start_from_bottom):
+                scroll_to_bottom(wd, delay)
+                thumbnails = wd.find_elements(By.CLASS_NAME, "njFjte")
+                thumbnails = thumbnails[::-1]
+            else:
+                thumbnails = wd.find_elements(By.CLASS_NAME, "njFjte")
         except Exception as e:
             print(e)
             skips += 1

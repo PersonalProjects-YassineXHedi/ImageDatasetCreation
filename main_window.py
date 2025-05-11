@@ -8,20 +8,14 @@ PATH = "C:/Users/yassi/Desktop/Projet/CookBotProject/WebScrappingDownloads/chrom
 
 
 def lunch_scrapping_setup_window(path):
-    global query_entry, number_of_images, source_var_images, source_var_shopping, folder_name_entry, root
-
-
-        
-  
+    global query_entry, number_of_images, source_var_images, source_var_shopping, start_from_bottom, folder_name_entry, root, driver_path       
+    driver_path  = path 
     root = tk.Tk()
     root.title("Scraper Setup")
-    root.geometry("700x300")
-
 
     root.grid_columnconfigure(0, weight=1)
     root.grid_columnconfigure(1, weight=1)
-    root.grid_rowconfigure(4, weight=1)  
-
+    root.grid_rowconfigure(5, weight=1)
 
     tk.Label(root, text="Query:", font=('calibre', 14, 'bold')).grid(row=0, column=0, padx=20, pady=15, sticky="e")
     query_entry = tk.Entry(root, font=('calibre', 14), width=40)
@@ -51,6 +45,12 @@ def lunch_scrapping_setup_window(path):
 
     tk.Label(root).grid(row=4, column=0)
 
+    start_from_bottom = tk.IntVar()
+
+    tk.Label(root, text="Start Point:", font=('calibre', 14, 'bold')).grid(row=4, column=0, padx=20, pady=10, sticky="e")
+    start_point_checkbox = tk.Checkbutton(root, text="Start from the bottom", variable=start_from_bottom, font=('calibre', 14))
+    start_point_checkbox.grid(row=4, column=1, padx=20, pady=10, sticky="w")
+
     start_button = tk.Button(root, text="Start Scraping", font=('calibre', 14), width=20, command=start_scraping)
     start_button.grid(row=5, column=1, pady=20, padx=20, sticky="e")
 
@@ -66,7 +66,11 @@ def start_scraping():
 
 def run_scraping(waiting_window):
     search_type = get_search_type()
-    urls = get_urls_from_query(PATH, search_type, query_entry.get(), delay=1, max_images=int(number_of_images.get()))
+    start_from_bottom_bool = False
+    if(start_from_bottom == 1):
+        start_from_bottom_bool = True
+
+    urls = get_urls_from_query(driver_path, search_type, query_entry.get(), delay=1, max_images=int(number_of_images.get()), start_from_bottom=start_from_bottom_bool)
     waiting_window.destroy()
     folder_name = folder_name_entry.get()
     root.destroy()
@@ -127,4 +131,7 @@ def check_string_entry(entry):
 
 def check_entries():
     return (check_string_entry(query_entry) and check_string_entry(folder_name_entry) and check_image_number_entry() and check_chekbox_entry())
+
+
+
 lunch_scrapping_setup_window(PATH)
