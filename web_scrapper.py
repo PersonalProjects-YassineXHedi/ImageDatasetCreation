@@ -40,19 +40,26 @@ def get_images_from_google(executable_path, search_type, query, delay, max_image
         case 'shoppings':
             return get_images_from_google_shop(query, delay, max_images, start_from_bottom)
 
-def scroll_down(wd, delay):
-    try:
-        last_height = wd.execute_script("return document.body.scrollHeight")
-        wd.execute_script("window.scrollBy(0, document.body.scrollHeight);")
-        time.sleep(delay)
-        new_height = wd.execute_script("return document.body.scrollHeight")
-        if new_height == last_height:
-            print("Reached the end of the page.")
-            return False
-        return True
-    except Exception as e:
-        print(e)
-        return False
+def scroll_down(wd, delay, max_tries = 2):
+    tries = 1
+    while tries <= max_tries:
+        try:
+            last_height = wd.execute_script("return document.body.scrollHeight")
+            wd.execute_script("window.scrollBy(0, document.body.scrollHeight);")
+            time.sleep(delay)
+            new_height = wd.execute_script("return document.body.scrollHeight")
+            if new_height == last_height:
+                if(tries == max_tries):
+                    print("Reached the end of the page.")
+                    return False
+                tries += 1
+            else:
+                return True
+        except Exception as e:
+            print("Scroll error:", e)
+            tries += 1
+    print("No more new items loaded.")
+    return False
     
 def scroll_to_bottom(wd, delay):
     reach_bottom = False
