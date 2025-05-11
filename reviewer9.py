@@ -4,6 +4,7 @@ import requests
 import io
 import os
 import concurrent.futures
+import math
 
 
 
@@ -29,7 +30,10 @@ def review_images(image_urls, save_folder_path, subfolder_name):
 
 
     def show_batch():
-        nonlocal index, img_buttons
+        nonlocal index, img_buttons, page_number
+        page_number += 1
+        root.title(f"Page {page_number} / {total_pages}")
+
         for widget in grid_frame.winfo_children():
             widget.destroy()
 
@@ -82,7 +86,6 @@ def review_images(image_urls, save_folder_path, subfolder_name):
     cell_height = (screen_height // 3) - 50
 
     root.maxsize(screen_width, screen_height)
-    root.title("Select images to save")
     grid_frame = Frame(root)
     grid_frame.pack()
 
@@ -99,6 +102,8 @@ def review_images(image_urls, save_folder_path, subfolder_name):
     Button(root, text="Next", command=next_batch).pack(pady=10)
     root.bind("<space>", lambda event: next_batch())
 
+    total_pages = math.ceil(len(image_urls) / 9)
+    page_number = 0
     show_batch()
     root.mainloop()
 
