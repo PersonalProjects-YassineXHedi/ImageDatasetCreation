@@ -67,7 +67,7 @@ def start_scraping():
 def run_scraping(waiting_window):
     search_type = get_search_type()
     start_from_bottom_bool = False
-    if(start_from_bottom == 1):
+    if(start_from_bottom.get() == 1):
         start_from_bottom_bool = True
 
     urls = get_urls_from_query(driver_path, search_type, query_entry.get(), delay=1, max_images=int(number_of_images.get()), start_from_bottom=start_from_bottom_bool)
