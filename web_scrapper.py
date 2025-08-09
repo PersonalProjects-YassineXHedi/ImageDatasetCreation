@@ -143,7 +143,7 @@ def get_images_from_google_images(executable_path, query, delay, max_images, sta
 
                 if image.get_attribute('src') and 'http' in image.get_attribute('src'):
                     image_urls.add(image.get_attribute('src'))
-                    print(f"Found {len(image_urls)}")
+                    print(f"IMAGES: Found {len(image_urls)}")
                     found_valid_image = True
             if not found_valid_image:
                 skips += 1
@@ -211,28 +211,35 @@ def get_images_from_google_shop(query, delay, max_images, start_from_bottom):
                 WebDriverWait(wd, 10).until(
                     EC.presence_of_all_elements_located((By.CLASS_NAME, "KfAt4d"))
                 )
+                images = wd.find_elements(By.CLASS_NAME, "KfAt4d")
             except Exception as e:
                 print(e)
                 skips += 1
                 max_images += 1
                 continue
-            images = wd.find_elements(By.CLASS_NAME, "KfAt4d")
             
-            found_valid_image = False
-            for image in images:
-                if image.get_attribute('src') in image_urls:
-                    max_images += 1
-                    skips += 1
-                    break
+            try:
+                found_valid_image = False
+                for image in images:
+                    if image.get_attribute('src') in image_urls:
+                        max_images += 1
+                        skips += 1
+                        break
 
-                if image.get_attribute('src') and 'http' in image.get_attribute('src'):
-                    image_urls.add(image.get_attribute('src'))
-                    print(f"Found {len(image_urls)}")
-                    found_valid_image = True
-            if not found_valid_image:
+                    if image.get_attribute('src') and 'http' in image.get_attribute('src'):
+                        image_urls.add(image.get_attribute('src'))
+                        print(f"SHOPPING: Found {len(image_urls)}")
+                        found_valid_image = True
+                if not found_valid_image:
+                    skips += 1
+                    max_images += 1
+                    continue
+            except Exception as e:
+                print(e)
                 skips += 1
                 max_images += 1
                 continue
+        
         if(not scroll_down(wd, delay)):
             break
     wd.quit()    
