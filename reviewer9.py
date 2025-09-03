@@ -14,6 +14,7 @@ HEADERS = {
 
 def review_images(image_urls, save_folder_path, subfolder_name):
     index = 0
+    num_selected_images = 0
     selected_flags = [False] * 9
     img_buttons = []
 
@@ -21,16 +22,20 @@ def review_images(image_urls, save_folder_path, subfolder_name):
 
 
     def toggle_selection(i):
+        nonlocal num_selected_images
         selected_flags[i] = not selected_flags[i]
         frame, btn = img_buttons[i]
         if selected_flags[i]:
             frame.config(highlightbackground="red")
+            num_selected_images += 1
         else:
             frame.config(highlightbackground="white")
+            num_selected_images -= 1
+        label_var.set(f"Selected Images: {num_selected_images}")
 
 
     def show_batch():
-        nonlocal index, img_buttons, page_number
+        nonlocal index, img_buttons, page_number, num_selected_images
         page_number += 1
         root.title(f"Page {page_number} / {total_pages}")
 
@@ -39,6 +44,9 @@ def review_images(image_urls, save_folder_path, subfolder_name):
 
         img_buttons = []
         selected_flags[:] = [False] * 9
+        label_var.set(f"Selected Images: {num_selected_images}")
+
+
         for i in range(3):
             for j in range(3):
                 if index >= len(images):
@@ -88,6 +96,10 @@ def review_images(image_urls, save_folder_path, subfolder_name):
     root.maxsize(screen_width, screen_height)
     grid_frame = Frame(root)
     grid_frame.pack()
+
+    label_var = StringVar(value=f"Selected Images: {num_selected_images}")
+    label = Label(root, textvariable=label_var)
+    label.pack()
 
 
     os.makedirs(save_folder_path, exist_ok=True)

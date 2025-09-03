@@ -61,17 +61,16 @@ def lunch_scrapping_setup_window(path):
 def start_scraping():
     if not check_entries():
         return
-    waiting_window = switch_to_waiting_window(root)
-    run_scraping(waiting_window)
+    root.withdraw()
+    run_scraping()
 
-def run_scraping(waiting_window):
+def run_scraping():
     search_type = get_search_type()
     start_from_bottom_bool = False
     if(start_from_bottom.get() == 1):
         start_from_bottom_bool = True
 
     urls = get_urls_from_query(driver_path, search_type, query_entry.get(), delay=1, max_images=int(number_of_images.get()), start_from_bottom=start_from_bottom_bool)
-    waiting_window.destroy()
     folder_name = folder_name_entry.get()
     root.destroy()
     if(urls):
@@ -85,18 +84,6 @@ def get_search_type():
         return 1
     if(source_var_shopping.get() == 1 and source_var_images.get() == 1):
         return 2
-
-def switch_to_waiting_window(root):
-    root.withdraw()
-    new_window = tk.Toplevel(root)
-    new_window.geometry("700x300")
-    new_window.title("Waiting Window")
-    tk.Label(
-        new_window,
-        text="Images Scrapping is in progress, please wait!",
-        font=("Helvetica", 24)
-    ).pack(expand=True, fill="both")
-    return new_window
 
 def check_chekbox_entry():
     if(source_var_images.get() != 1 and source_var_shopping.get() != 1):
